@@ -9,7 +9,7 @@ tasks:
       - setup:goimportx
     cmds:
       - goimportx --group "system,others" --file {{.CLI_ARGS}} -w {{.CLI_ARGS}}
-  setup:goimports:
+  setup:goimportx:
     cmds:
       - go install github.com/anqiansong/goimportx@latest
     status:
