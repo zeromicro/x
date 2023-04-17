@@ -1,0 +1,5 @@
+pre-commit:
+  commands:
+    goimportx:
+      glob: "*.go"
+      run: task goimportx -- {staged_files} && git add {staged_files}

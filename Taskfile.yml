@@ -1,0 +1,18 @@
+version: '3'
+
+vars:
+  MODULE: x
+
+tasks:
+  goimportx:
+    deps:
+      - setup:goimportx
+    cmds:
+      - goimportx --group "system,others" --file {{.CLI_ARGS}} -w {{.CLI_ARGS}}
+  setup:goimports:
+    cmds:
+      - go install github.com/anqiansong/goimportx@latest
+    status:
+      - test -f goimportx
+
+
