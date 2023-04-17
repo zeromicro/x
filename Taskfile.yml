@@ -8,7 +8,9 @@ tasks:
     deps:
       - setup:goimportx
     cmds:
-      - goimportx --group "system,others" --file {{.CLI_ARGS}} -w {{.CLI_ARGS}}
+      - 'for file in {{.CLI_ARGS}}; do
+      goimportx --group "system,others" --file $file -w
+      done'
   setup:goimportx:
     cmds:
       - go install github.com/anqiansong/goimportx@latest
