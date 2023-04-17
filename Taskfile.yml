@@ -9,7 +9,7 @@ tasks:
       - setup:goimportx
     cmds:
       - 'for file in {{.CLI_ARGS}}; do
-      goimportx --group "system,others" --file $file -w
+      goimportx --group "system,others" --file $file -w;
       done'
   setup:goimportx:
     cmds:
