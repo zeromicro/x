@@ -17,7 +17,7 @@ type Data[T, Y any] struct {
 
 // Option represents an option for Executor, generic type T is the input type, generic type Y is the want type.
 type Option[T, Y any] func(*Executor[T, Y])
-type assertFn[Y any] func(t *testing.T, expected, actual Y) bool
+type assertFn[Y any] func(t *testing.T, expected, actual Y)
 
 // WithComparison is an option to set the comparison function,
 // generic type T is the input type, generic type Y is the output type.
@@ -36,21 +36,19 @@ type Executor[T, Y any] struct {
 // NewExecutor creates an Executor, generic type T is the input type, generic type Y is the want type.
 func NewExecutor[T, Y any](opt ...Option[T, Y]) *Executor[T, Y] {
 	e := &Executor[T, Y]{}
-	options :=[]Option[T, Y]{WithComparison[T, Y](func(t *testing.T, expected, actual Y) bool {
+	options := []Option[T, Y]{WithComparison[T, Y](func(t *testing.T, expected, actual Y) {
 		gotBytes, err := json.Marshal(actual)
 		if err != nil {
 			t.Fatal(err)
-			return false
 		}
 		wantBytes, err := json.Marshal(expected)
 		if err != nil {
 			t.Fatal(err)
-			return false
 		}
-		return assert.JSONEq(t, string(wantBytes), string(gotBytes))
+		assert.JSONEq(t, string(wantBytes), string(gotBytes))
 	})}
 
-	options=append(options,opt...)
+	options = append(options, opt...)
 
 	for _, o := range options {
 		o(e)
@@ -87,7 +85,7 @@ func (e *Executor[T, Y]) RunE(t *testing.T, do func(T) (Y, error)) {
 		t.Run(v.Name, func(t *testing.T) {
 			inner := do
 			got, err := inner(v.Input)
-			if v.E != nil {
+			if err != nil {
 				assert.Equal(t, v.E, err)
 				return
 			}

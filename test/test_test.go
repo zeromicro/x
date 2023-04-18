@@ -66,8 +66,8 @@ func TestExecutor_RunE(t *testing.T) {
 
 func TestWithComparison(t *testing.T) {
 	var dummyError = errors.New("dummy error")
-	executor := NewExecutor[string, string](WithComparison[string, string](func(t *testing.T, expected, actual string) bool {
-		return assert.Equal(t, expected, actual)
+	executor := NewExecutor[string, string](WithComparison[string, string](func(t *testing.T, expected, actual string) {
+		assert.Equal(t, expected, actual)
 	}))
 	executor.Add([]Data[string, string]{
 		{

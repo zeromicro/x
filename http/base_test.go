@@ -206,8 +206,7 @@ func TestXmlBaseResponseCtx(t *testing.T) {
 	})
 }
 
-var comparisonOption = test.WithComparison[any, testWriterResult](func(t *testing.T, expected, actual testWriterResult) bool {
+var comparisonOption = test.WithComparison[any, testWriterResult](func(t *testing.T, expected, actual testWriterResult) {
 	assert.Equal(t, expected.code, actual.code)
 	assert.Equal(t, expected.writeString, actual.writeString)
-	return true
 })

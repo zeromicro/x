@@ -2,6 +2,7 @@ package http
 
 import (
 	"context"
+	"encoding/xml"
 	"errors"
 	"net/http"
 	"strings"
@@ -11,7 +12,8 @@ import (
 )
 
 type message struct {
-	Name string `json:"name" xml:"name"`
+	XMLName xml.Name `json:"-" xml:"data"`
+	Name    string   `json:"name" xml:"name"`
 }
 
 func TestOkXml(t *testing.T) {
@@ -21,7 +23,7 @@ func TestOkXml(t *testing.T) {
 	msg := message{Name: "anyone"}
 	OkXml(&w, msg)
 	assert.Equal(t, http.StatusOK, w.code)
-	assert.Equal(t, "<message><name>anyone</name></message>", w.builder.String())
+	assert.Equal(t, "<data><name>anyone</name></data>", w.builder.String())
 }
 
 func TestOkXmlCtx(t *testing.T) {
@@ -31,7 +33,7 @@ func TestOkXmlCtx(t *testing.T) {
 	msg := message{Name: "anyone"}
 	OkXmlCtx(context.TODO(), &w, msg)
 	assert.Equal(t, http.StatusOK, w.code)
-	assert.Equal(t, "<message><name>anyone</name></message>", w.builder.String())
+	assert.Equal(t, "<data><name>anyone</name></data>", w.builder.String())
 }
 
 func TestWriteXmlTimeout(t *testing.T) {
