@@ -69,6 +69,9 @@ func wrapBaseResponse(v any) BaseResponse[any] {
 	case *status.Status:
 		resp.Code = int(data.Code())
 		resp.Msg = data.Message()
+	case interface{ GRPCStatus() *status.Status }:
+		resp.Code = int(data.GRPCStatus().Code())
+		resp.Msg = data.GRPCStatus().Message()
 	case error:
 		resp.Code = BusinessCodeError
 		resp.Msg = data.Error()
