@@ -136,3 +136,123 @@ func (w *tracedResponseWriter) WriteHeader(code int) {
 	w.wroteHeader = true
 	w.code = code
 }
+
+func TestOkHTML(t *testing.T) {
+	w := tracedResponseWriter{
+		headers: make(map[string][]string),
+	}
+	msg := `<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+</body>
+</html>`
+	OkHTML(&w, msg)
+	assert.Equal(t, http.StatusOK, w.code)
+	assert.Equal(t, "<!DOCTYPE html>\n<html>\n<head>\n  <title>Hello, World!</title>\n</head>\n<body>\n  <h1>Hello, World!</h1>\n</body>\n</html>", w.builder.String())
+}
+func TestOkHTMLCtx(t *testing.T) {
+	w := tracedResponseWriter{
+		headers: make(map[string][]string),
+	}
+	msg := `<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+</body>
+</html>`
+	OkHTMLCtx(context.TODO(), &w, msg)
+	assert.Equal(t, http.StatusOK, w.code)
+	assert.Equal(t, "<!DOCTYPE html>\n<html>\n<head>\n  <title>Hello, World!</title>\n</head>\n<body>\n  <h1>Hello, World!</h1>\n</body>\n</html>", w.builder.String())
+}
+
+func TestWriteHTMLTimeout(t *testing.T) {
+	// only log it and ignore
+	w := tracedResponseWriter{
+		headers: make(map[string][]string),
+		err:     http.ErrHandlerTimeout,
+	}
+	msg := `<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+</body>
+</html>`
+	WriteHTML(&w, http.StatusOK, msg)
+	assert.Equal(t, http.StatusOK, w.code)
+}
+
+func TestWriteHTMLError(t *testing.T) {
+	// only log it and ignore
+	w := tracedResponseWriter{
+		headers: make(map[string][]string),
+		err:     errors.New("foo"),
+	}
+	msg := `<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+</body>
+</html>`
+	WriteHTML(&w, http.StatusOK, msg)
+	assert.Equal(t, http.StatusOK, w.code)
+}
+
+func TestWriteHTMLCtxError(t *testing.T) {
+	// only log it and ignore
+	w := tracedResponseWriter{
+		headers: make(map[string][]string),
+		err:     errors.New("foo"),
+	}
+	msg := `<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+</body>
+</html>`
+	WriteHTMLCtx(context.TODO(), &w, http.StatusOK, msg)
+	assert.Equal(t, http.StatusOK, w.code)
+}
+
+func TestWriteHTMLLessWritten(t *testing.T) {
+	w := tracedResponseWriter{
+		headers:     make(map[string][]string),
+		lessWritten: true,
+	}
+	msg := `<!DOCTYPE html>
+<html>
+<head>
+  <title>Hello, World!</title>
+</head>
+<body>
+  <h1>Hello, World!</h1>
+</body>
+</html>`
+	WriteHTML(&w, http.StatusOK, msg)
+	assert.Equal(t, http.StatusOK, w.code)
+}
+
+func TestWritHTMLTypeFailed(t *testing.T) {
+	w := tracedResponseWriter{
+		headers: make(map[string][]string),
+	}
+	WriteHTML(&w, http.StatusOK, map[string]any{
+		"Data": complex(0, 0),
+	})
+	assert.Equal(t, http.StatusInternalServerError, w.code)
+}

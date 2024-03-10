@@ -84,7 +84,9 @@ func WriteHTMLCtx(ctx context.Context, w http.ResponseWriter, code int, v any) {
 
 func doWriteHTML(w http.ResponseWriter, code int, v any) error {
 	if reflect.TypeOf(v).Kind() != reflect.String {
-		return fmt.Errorf("the value must be a string, but got: %v", v)
+		err := fmt.Errorf("the value must be a string, but got: %v", v)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return err
 	}
 
 	bs := v.(string)
