@@ -247,6 +247,8 @@ func TestWriteHTMLLessWritten(t *testing.T) {
 	assert.Equal(t, http.StatusOK, w.code)
 }
 
+type MyString string
+
 func TestWritHTMLTypeFailed(t *testing.T) {
 	w := tracedResponseWriter{
 		headers: make(map[string][]string),
@@ -254,5 +256,11 @@ func TestWritHTMLTypeFailed(t *testing.T) {
 	WriteHTML(&w, http.StatusOK, map[string]any{
 		"Data": complex(0, 0),
 	})
+	assert.Equal(t, http.StatusInternalServerError, w.code)
+
+	w = tracedResponseWriter{
+		headers: make(map[string][]string),
+	}
+	WriteHTML(&w, http.StatusOK, MyString("foo"))
 	assert.Equal(t, http.StatusInternalServerError, w.code)
 }

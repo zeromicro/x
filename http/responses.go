@@ -4,11 +4,9 @@ import (
 	"context"
 	"encoding/xml"
 	"fmt"
-	"net/http"
-	"reflect"
-
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
+	"net/http"
 )
 
 // OkXml writes v into w with 200 OK.
@@ -83,13 +81,15 @@ func WriteHTMLCtx(ctx context.Context, w http.ResponseWriter, code int, v any) {
 }
 
 func doWriteHTML(w http.ResponseWriter, code int, v any) error {
-	if reflect.TypeOf(v).Kind() != reflect.String {
+	bs := []byte{}
+	switch v.(type) {
+	case string:
+		bs = []byte(v.(string))
+	default:
 		err := fmt.Errorf("the value must be a string, but got: %v", v)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return err
 	}
-
-	bs := v.(string)
 
 	w.Header().Set(httpx.ContentType, HTMLContentType)
 	w.WriteHeader(code)
