@@ -57,44 +57,36 @@ func doWriteXml(w http.ResponseWriter, code int, v any) error {
 }
 
 // OkHTML writes v into w with 200 OK.
-func OkHTML(w http.ResponseWriter, v any) {
+func OkHTML(w http.ResponseWriter, v string) {
 	WriteHTML(w, http.StatusOK, v)
 }
 
 // OkHTMLCtx writes v into w with 200 OK.
-func OkHTMLCtx(ctx context.Context, w http.ResponseWriter, v any) {
+func OkHTMLCtx(ctx context.Context, w http.ResponseWriter, v string) {
 	WriteHTMLCtx(ctx, w, http.StatusOK, v)
 }
 
 // WriteHTML writes v as HTML string into w with code.
-func WriteHTML(w http.ResponseWriter, code int, v any) {
+func WriteHTML(w http.ResponseWriter, code int, v string) {
 	if err := doWriteHTML(w, code, v); err != nil {
 		logx.Error(err)
 	}
 }
 
 // WriteHTMLCtx writes v as HTML string into w with code.
-func WriteHTMLCtx(ctx context.Context, w http.ResponseWriter, code int, v any) {
+func WriteHTMLCtx(ctx context.Context, w http.ResponseWriter, code int, v string) {
 	if err := doWriteHTML(w, code, v); err != nil {
 		logx.WithContext(ctx).Error(err)
 	}
 }
 
-func doWriteHTML(w http.ResponseWriter, code int, v any) error {
-	bs := []byte{}
-	switch v.(type) {
-	case string:
-		bs = []byte(v.(string))
-	default:
-		err := fmt.Errorf("the value must be a string, but got: %v", v)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return err
-	}
+func doWriteHTML(w http.ResponseWriter, code int, v string) error {
 
 	w.Header().Set(httpx.ContentType, HTMLContentType)
 	w.WriteHeader(code)
 
-	if n, err := w.Write([]byte(bs)); err != nil {
+	bs := []byte(v)
+	if n, err := w.Write(bs); err != nil {
 		// http.ErrHandlerTimeout has been handled by http.TimeoutHandler,
 		// so it's ignored here.
 		if err != http.ErrHandlerTimeout {
