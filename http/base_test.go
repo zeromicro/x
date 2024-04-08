@@ -46,6 +46,14 @@ func TestJsonBaseResponse(t *testing.T) {
 			},
 		},
 		{
+			Name:  "status.Error",
+			Input: status.New(codes.Unknown, "Unknown").Err(),
+			Want: testWriterResult{
+				code:        200,
+				writeString: `{"code":2,"msg":"Unknown"}`,
+			},
+		},
+		{
 			Name:  "error",
 			Input: errors.New("test"),
 			Want: testWriterResult{
@@ -97,6 +105,14 @@ func TestJsonBaseResponseCtx(t *testing.T) {
 			},
 		},
 		{
+			Name:  "status.Error",
+			Input: status.New(codes.Unknown, "Unknown").Err(),
+			Want: testWriterResult{
+				code:        200,
+				writeString: `{"code":2,"msg":"Unknown"}`,
+			},
+		},
+		{
 			Name:  "error",
 			Input: errors.New("test"),
 			Want: testWriterResult{
@@ -140,6 +156,14 @@ func TestXmlBaseResponse(t *testing.T) {
 			},
 		},
 		{
+			Name:  "status.Error",
+			Input: status.New(codes.Unknown, "Unknown").Err(),
+			Want: testWriterResult{
+				code:        200,
+				writeString: `<xml version="1.0" encoding="UTF-8"><code>2</code><msg>Unknown</msg></xml>`,
+			},
+		},
+		{
 			Name:  "error",
 			Input: errors.New("test"),
 			Want: testWriterResult{
@@ -180,6 +204,14 @@ func TestXmlBaseResponseCtx(t *testing.T) {
 			Want: testWriterResult{
 				code:        200,
 				writeString: `<xml version="1.0" encoding="UTF-8"><code>0</code><msg>ok</msg></xml>`,
+			},
+		},
+		{
+			Name:  "status.Error",
+			Input: status.New(codes.Unknown, "Unknown").Err(),
+			Want: testWriterResult{
+				code:        200,
+				writeString: `<xml version="1.0" encoding="UTF-8"><code>2</code><msg>Unknown</msg></xml>`,
 			},
 		},
 		{
