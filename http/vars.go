@@ -14,4 +14,6 @@ const (
 
 	// XmlContentType represents the content type for xml.
 	XmlContentType = "application/xml"
+	// HTMLContentType represents the content type for html.
+	HTMLContentType = "application/html"
 )
